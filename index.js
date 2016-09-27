@@ -3,8 +3,8 @@
 var Alexa = require('alexa-sdk');
 var APP_ID = undefined; //OPTIONAL: replace with 'amzn1.echo-sdk-ams.app.[your-unique-value-here]';
 var SKILL_NAME = 'Baseball Scores';
-var teams = require('./teams');
-var mlb = require('./mlb');
+var teams = require('./src/teams');
+var mlb = require('./src/mlb');
 
 
 exports.handler = function(event, context, callback) {
@@ -30,18 +30,15 @@ var handlers = {
             teamName = teamSlot.value.toLowerCase();
         }
 
-        var cardTitle = SKILL_NAME + ' - Recipe for ' + teamName;
-        var score = teamName;
-
         if (teams[teamName]) {
           var _this = this;
             mlb.getScores(teamName, function(data) {
               _this.attributes['speechOutput'] = data;
               _this.attributes['repromptSpeech'] = 'Try saying repeat.';
-              _this.emit(':askWithCard', data, _this.attributes['repromptSpeech'], cardTitle, data);
+              _this.emit(':ask', data, _this.attributes['repromptSpeech']);
             });
         } else {
-            var speechOutput = 'This does not appear to be an MLB team';
+            var speechOutput = 'This does not appear to be an MLB team ';
             var repromptSpeech = 'What else can I help with?';
             speechOutput += repromptSpeech;
 
