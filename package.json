@@ -1,28 +1,28 @@
 {
-  "name": "skill-sample-nodejs-howto",
+  "name": "alexa-baseball-scores",
   "version": "1.0.0",
-  "description": "How-to skill sample",
-  "main": "./src/index.js",
+  "description": "Baseball score skill for alexa",
+  "main": "./index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/alexa/skill-sample-nodejs-howto.git"
+    "url": "git+https://github.com/ihoegen/alexa-baseball-scores"
   },
   "keywords": [
     "Alexa",
     "skill",
-    "howto"
+    "baseball",
+    "scores"
   ],
-  "author": "Amazon.com",
+  "author": "Ian Hoegen",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/alexa/skill-sample-nodejs-howto/issues"
+    "url": "https://github.com/ihoegen/alexa-baseball-scores/issues"
   },
-  "homepage": "https://github.com/alexa/skill-sample-nodejs-howto#readme",
+  "homepage": "https://github.com/ihoegen/alexa-baseball-scores#readme",
   "dependencies": {
-    "alexa-sdk": "^1.0.0",
-    "mlb": "0.0.1"
+    "alexa-sdk": "^1.0.0"
   }
 }

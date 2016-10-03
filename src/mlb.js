@@ -1,61 +1,45 @@
-var mlb = require('mlb');
+var mlb = require('./gdx');
+function getScores(team, callback) {
+  var date = new Date();
+  var month = date.getMonth() + 1;
+  var year = date.getFullYear();
+  var day = date.getDate() - 1;
+    mlb.getGameUrl(team, new Date(year, month, day), function(err, url){
+      if (!err){
+        mlb.getGameInfo(url, function(err, data){
+          var homeTeam = data.home_team_name;
+          var awayTeam = data.away_team_name;
+          var awayScore = data.away_team_runs;
+          var homeScore = data.home_team_runs;
+          var gameStatus = data.status;
+          var localStart = data.home_time;
+          var tied = homeScore === awayScore;
+          var homeLeading = parseInt(homeScore) > parseInt(awayScore);
 
-function getGames(callback) {
-  mlb.games.get(function(err, res) {
-    callback(res);
-  });
-}
-function getScore(team, callback) {
-  getGames(function(res){
-    var found = false;
-    for (var i in res) {
-      var gameId = i;
-      var game = res[i];
-      var homeTeam = game.home.toLowerCase();
-      var awayTeam = game.away.toLowerCase();
-      if (team.toLowerCase() === homeTeam || team.toLowerCase() === awayTeam) {
-        found = true;
-        var gameStatus =  res[gameId].status;
-        var gameTime = res[gameId].time;
-        var gameFound = mlb.games.url(gameId);
-        mlb.score(gameFound, function(err, result){
-          if (result) {
-            var teams = [];
-            var scores = []
-            for (var team in result) {
-              teams.push(team);
-              scores.push(result[team]);
-            }
-            var firstScore = parseInt(scores[0]);
-            var secondScore = parseInt(scores[1]);
-            if (gameStatus == 'Final') {
-              if (firstScore > secondScore) {
-                callback('The ' + teams[0] + ' beat the ' + teams[1] + ' ' + firstScore + ' to ' + secondScore);
-              } else if (secondScore > firstScore) {
-                callback('The ' + teams[1] + ' beat the ' + teams[0] + ' ' + secondScore + ' to ' + firstScore);
-              } else {
-                callback('The ' + teams[0] + ' are currently tied with the ' + teams[1] + ' ' + firstScore + ' to ' + secondScore);
-              }
+          if (gameStatus === 'Final') {
+            if (homeLeading) {
+              callback('The ' + homeTeam + ' beat the ' + awayTeam + ' ' + homeScore + ' to ' + awayScore);
             } else {
-              if (firstScore > secondScore) {
-                callback('The ' + teams[0] + ' are currently leading the ' + teams[1] + ' ' + firstScore + ' to ' + secondScore);
-              } else if (secondScore > firstScore) {
-                callback('The ' + teams[1] + ' are currently leading the ' + teams[0] + ' ' + secondScore + ' to ' + firstScore);
-              } else {
-                callback('The ' + teams[0] + ' are currently tied with the ' + teams[1] + ' ' + firstScore + ' to ' + secondScore);
-              }
+              callback('The ' + awayTeam + ' beat the ' + homeTeam + ' ' + awayScore + ' to ' + homeScore);
             }
+          } else if (gameStatus === 'Cancelled') {
+            callback('The ' + awayTeam + ' at ' + homeTeam + ' game has been cancelled.')
+          } else if (gameStatus === 'Preview') {
+            callback('The ' + awayTeam + ' at ' + homeTeam + ' game starts at ' + localStart + ' local time')
           } else {
-            callback('The game will start at ' + gameTime);
+            if (homeLeading) {
+              callback('The ' + homeTeam + ' is leading the ' + awayTeam + ' ' + homeScore + ' to ' + awayScore);
+            } else if (tied){
+              callback('The ' + awayTeam + ' are tied with the  ' + homeTeam + ' ' + awayScore + ' to ' + homeScore);
+            } else {
+              callback('The ' + awayTeam + ' is leading the  ' + homeTeam + ' ' + awayScore + ' to ' + homeScore);
+            }
           }
         });
-        return;
+      } else {
+        callback('There does not appear to be any games for the ' + team + ' for today')
       }
-    }
-    if (!found) callback("I can't seem to find a game for the " + team + " today");
-  });
+    });
 }
-getScore('mariners', function(data){
-  console.log(data);
-})
-exports.getScores = getScore;
+
+exports.getScores = getScores;

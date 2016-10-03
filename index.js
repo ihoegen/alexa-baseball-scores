@@ -16,12 +16,7 @@ exports.handler = function(event, context, callback) {
 
 var handlers = {
     'NewSession': function () {
-        this.attributes['speechOutput'] = 'Welcome to ' + SKILL_NAME + '. You can ask a question like, what\'s the' +
-            ' score of the Mariner\'s game? ... Now, what can I help you with.';
-        // If the user either does not reply to the welcome message or says something that is not
-        // understood, they will be prompted again with this text.
-        this.attributes['repromptSpeech'] = 'For instructions on what you can say, please say help me.';
-        this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech'])
+      this.emit('ScoresIntent');
     },
     'ScoresIntent': function () {
         var teamSlot = this.event.request.intent.slots.Team;
