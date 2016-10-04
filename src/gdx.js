@@ -22,6 +22,10 @@ function getGameUrl(team, date, callback)
       }
       var games = JSON.parse(buffer.toString("ascii")).data.games.game;
       gameFound = false;
+      if (!games) {
+        callback("Unknown Error", null);
+        return;
+      }
       if (games.constructor === Array) {
         games.forEach(function (game){
           if(game.home_team_name.toLowerCase() == team ||  game.away_team_name.toLowerCase() == team){

@@ -29,7 +29,7 @@ var handlers = {
           var _this = this;
             mlb.getScores(teamName, function(data) {
               _this.attributes['speechOutput'] = data;
-              _this.emit(':ask', data);
+              _this.emit(':tell', data);
             });
         } else {
             var speechOutput = 'This does not appear to be an MLB team ';
