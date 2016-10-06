@@ -19,12 +19,23 @@ var handlers = {
       this.emit('ScoresIntent');
     },
     'ScoresIntent': function () {
+      try {
         var teamSlot = this.event.request.intent.slots.Team;
         var teamName;
         if (teamSlot && teamSlot.value) {
-            teamName = teamSlot.value.toLowerCase();
+          teamName = teamSlot.value.toLowerCase();
         }
+      } catch (e) {
+        var speechOutput = 'You can ask questions such as, what\'s the score of the Mariners game, or, you can say exit... '
+        var repromptSpeech = 'What else can I help with?';
+        speechOutput += repromptSpeech;
 
+        this.attributes['speechOutput'] = speechOutput;
+        this.attributes['repromptSpeech'] = repromptSpeech;
+
+        this.emit(':ask', speechOutput, repromptSpeech);
+        return;
+      }
         if (teams[teamName]) {
           var _this = this;
             mlb.getScores(teamName, function(data) {
